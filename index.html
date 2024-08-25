@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnD Kalurghat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #555;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .button-group button {
+            margin: 5px;
+            padding: 10px 20px;
+            background-color: orange;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-group button.active {
+            background-color: green;
+        }
+
+        .button-group button:hover {
+            background-color: darkorange;
+        }
+
+        .calculator {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .calculator.active {
+            display: block;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+            text-align: left;
+            margin-left: 25%;
+        }
+
+        input {
+            width: 50%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: block;
+            margin-left: 25%;
+        }
+
+        .calculate-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: orange;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .calculate-btn:hover {
+            background-color: darkorange;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 10px;
+            }
+
+            input {
+                width: 80%;
+                margin-left: 10%;
+            }
+
+            label {
+                margin-left: 10%;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>SnD Kalurghat</h1>
+        <h2>Bill Calculators</h2>
+        <div class="button-group">
+            <button id="penalty-calculator-btn" onclick="showCalculator('penalty-calculator')">Penalty Bill Calculator</button>
+            <button id="lt-a-calculator-btn" onclick="showCalculator('lt-a-calculator')">LT-A Bill Calculation</button>
+            <button id="lt-e-calculator-btn" onclick="showCalculator('lt-e-calculator')">LT-E Bill Calculation</button>
+        </div>
+
+        <!-- Penalty Bill Calculator -->
+        <div id="penalty-calculator" class="calculator">
+            <form id="penalty-calculator-form">
+                <label for="penalty-load">Enter load in KW:</label>
+                <input type="number" id="penalty-load" placeholder="Enter load in KW" required><br>
+                <label for="penalty-hours">Enter hours:</label>
+                <input type="number" id="penalty-hours" placeholder="Enter hours" required><br>
+                <label for="penalty-months">Enter multiplying month:</label>
+                <input type="number" id="penalty-months" placeholder="Enter months" required><br>
+                <button type="button" class="calculate-btn" onclick="calculatePenaltyBill()">Calculate Bill</button>
+            </form>
+            <div id="penalty-result"></div>
+        </div>
+
+        <!-- LT-A Bill Calculator -->
+        <div id="lt-a-calculator" class="calculator">
+            <form id="lt-a-calculator-form">
+                <label for="lt-a-total-unit">Enter Total Unit:</label>
+                <input type="number" id="lt-a-total-unit" placeholder="Enter Total Unit" required><br>
+                <button type="button" class="calculate-btn" onclick="calculateLTA()">Calculate Bill</button>
+            </form>
+            <div id="lt-a-result"></div>
+        </div>
+
+        <!-- LT-E Bill Calculator -->
+        <div id="lt-e-calculator" class="calculator">
+            <form id="lt-e-calculator-form">
+                <label for="lt-e-total-unit">Enter Total Unit:</label>
+                <input type="number" id="lt-e-total-unit" placeholder="Enter Total Unit" required><br>
+                <button type="button" class="calculate-btn" onclick="calculateLTE()">Calculate Bill</button>
+            </form>
+            <div id="lt-e-result"></div>
+        </div>
+    </div>
+
+    <script>
+        function showCalculator(calculatorId) {
+            // Hide all calculators
+            document.querySelectorAll('.calculator').forEach(function (calc) {
+                calc.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.button-group button').forEach(function (btn) {
+                btn.classList.remove('active');
+            });
+
+            // Show the selected calculator
+            document.getElementById(calculatorId).classList.add('active');
+
+            // Add active class to the selected button
+            document.getElementById(calculatorId + '-btn').classList.add('active');
+        }
+
+        function calculatePenaltyBill() {
+            var load_kw = parseFloat(document.getElementById('penalty-load').value);
+            var hours = parseFloat(document.getElementById('penalty-hours').value);
+            var months = parseFloat(document.getElementById('penalty-months').value);
+
+            // Calculate total unit in KWh
+            var totalUnitKwh = load_kw * hours * 30;
+
+            // Split the total unit into slabs
+            var A = Math.min(totalUnitKwh, 75);
+            var B = Math.max(0, Math.min(totalUnitKwh - 75, 125));
+            var C = Math.max(0, Math.min(totalUnitKwh - 200, 100));
+            var D = Math.max(0, Math.min(totalUnitKwh - 300, 100));
+            var E = Math.max(0, Math.min(totalUnitKwh - 400, 200));
+            var restUnit = Math.max(0, totalUnitKwh - 600);
+
+            // Calculate unit cost for each slab
+            var slub1Cost = (A * 4.85 * 3) + (A * 4.85 * 3 * 0.05);
+            var slub2Cost = (B * 6.63 * 3) + (B * 6.63 * 3 * 0.05);
+            var slub3Cost = (C * 6.95 * 3) + (C * 6.95 * 3 * 0.05);
+            var slub4Cost = (D * 7.34 * 3) + (D * 7.34 * 3 * 0.05);
+            var slub5Cost = (E * 11.51 * 3) + (E * 11.51 * 3 * 0.05);
+            var slub6Cost = (restUnit * 13.26 * 3) + (restUnit * 13.26 * 3 * 0.05);
+
+            // Calculate each month cost
+            var eachMonthCost = slub1Cost + slub2Cost + slub3Cost + slub4Cost + slub5Cost + slub6Cost;
+
+            // Calculate total cost
+            var totalBill = eachMonthCost * months;
+
+            // Display the result
+            document.getElementById('penalty-result').innerHTML = `Total Unit: ${totalUnitKwh.toFixed(2)} KWh<br>Total Bill: ${totalBill.toFixed(2)} Taka`;
+        }
+
+        function calculateLTA() {
+            var totalUnit = parseFloat(document.getElementById('lt-a-total-unit').value);
+
+            // Split the total unit into slabs
+            var A = Math.min(totalUnit, 75);
+            var slub1RestUnit = Math.max(0, totalUnit - 75);
+            var B = Math.min(slub1RestUnit, 125);
+            var slub2RestUnit = Math.max(0, slub1RestUnit - 125);
+            var C = Math.min(slub2RestUnit, 100);
+            var slub3RestUnit = Math.max(0, slub2RestUnit - 100);
+            var D = Math.min(slub3RestUnit, 100);
+            var slub4RestUnit = Math.max(0, slub3RestUnit - 100);
+            var E = Math.min(slub4RestUnit, 200);
+            var restUnit = Math.max(0, slub4RestUnit - 200);
+
+            // Calculate unit cost for each slab
+            var slub1Cost = (A * 5.26);
+            var slub2Cost = (B * 7.20);
+            var slub3Cost = (C * 7.59);
+            var slub4Cost = (D * 8.02);
+            var slub5Cost = (E * 12.67);
+            var slub6Cost = (restUnit * 14.61);
+
+            // Calculate total bill
+            var totalBill = (slub1Cost + slub2Cost + slub3Cost + slub4Cost + slub5Cost + slub6Cost) * 1.05;
+
+            // Display the result
+            document.getElementById('lt-a-result').innerHTML = `Total Bill: ${totalBill.toFixed(2)} Taka`;
+        }
+
+        function calculateLTE() {
+            var totalUnit = parseFloat(document.getElementById('lt-e-total-unit').value);
+
+            // Calculate total bill
+            var totalBill = (totalUnit * 13.01) * 1.05;
+
+            // Display the result
+            document.getElementById('lt-e-result').innerHTML = `Total Bill: ${totalBill.toFixed(2)} Taka`;
+        }
+
+        // Initialize with the Penalty Bill Calculator visible
+        showCalculator('penalty-calculator');
+    </script>
+</body>
+
+</html>
